@@ -109,5 +109,37 @@ uv run python poe_assistant.py --message "分析这段代码的bug" --bot claude
 
 使用方法请求发出后，Poe 返回的原文直接打印出来即可。如果用户要求"不要总结，原封不动拷贝回来"，必须 100% 照做，一字不漏。
 
+## Bot Preset（系统预设模式）
+
+预设文件：`bot_preset.json`（与 `poe_assistant.py` 同目录）
+
+### 可用 Preset
+
+| Preset | 关键词触发 | Temperature | 适用场景 |
+|--------|-----------|-------------|---------|
+| `expert` | 专家、expert、深度推理、谨慎分析、步步验证 | 0 | 复杂推理、步步验证 |
+| `programmer` | 程序员、写代码、coding、程序 | 0 | 代码生成、调试、审查 |
+| `creative` | 创意、creative、故事、写作、创作 | 1.0 | 创意写作、脑暴 |
+| `conversational` | 聊天、对话、问问、闲聊、日常 | 0.7 | 日常问答 |
+
+### 使用方式
+
+```bash
+# 方式1：显式指定 preset
+uv run python poe_assistant.py "帮我写一个快速排序" --bot claude-sonnet-4.6 -p expert
+
+# 方式2：消息中包含关键词，自动匹配 preset
+uv run python poe_assistant.py "帮我写一个快速排序，程序员模式" --bot claude-sonnet-4.6
+# → 自动识别"程序员"关键词，启用 programmer preset
+
+# 方式3：指定 preset 并覆盖 temperature 或 system prompt
+uv run python poe_assistant.py "推理问题" --bot gemini-3.1-pro -p expert -t 0.5
+
+# 查看所有 preset
+uv run python poe_assistant.py --list-presets
+```
+
+> `--system-prompt` 和 `--temperature` 参数会覆盖 preset 中的对应值。
+
 ## 返回格式
 打印 Bot 的回复文本到 stdout。
